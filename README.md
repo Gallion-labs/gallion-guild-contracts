@@ -1,6 +1,7 @@
 # Welcome to the Gallion Contracts!
 
-Gallion brings together a set of tools for the management and animation of Discord guilds in the world of web3 games. 
+Gallion brings together a set of tools for the management and animation of Discord guilds in the world of web3 games.
+
 This repository contains all contracts used by guilds. These contracts are powered by the ERC20, ERC721 and ERC1155 standards. The contracts also implement the [EIP-2535 Diamonds](https://github.com/ethereum/EIPs/issues/2535) standard, which allows for modular upgradeability.
 
 * Gallion Discord: https://discord.gg/y6xPxvRmhD
