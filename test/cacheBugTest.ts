@@ -1,13 +1,8 @@
-/* global ethers describe before it */
-/* eslint-disable prefer-const */
-
 import { DiamondLoupeFacet, PlayerFacet } from '../typechain-types';
 import { ethers } from 'hardhat';
 
 const { deployDiamond } = require('../scripts/deploy.ts')
-
 const { FacetCutAction } = require('../scripts/libraries/diamond.ts')
-
 const { assert } = require('chai')
 
 // The diamond example comes with 8 function selectors
