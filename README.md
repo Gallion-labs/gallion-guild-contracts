@@ -36,7 +36,7 @@ git clone git@github.com:gallion-labs/gallion-contracts.git
 
 2. Install NPM packages:
 ```console
-cd diamond-1-hardhat
+cd gallion-contracts
 yarn
 ```
 
