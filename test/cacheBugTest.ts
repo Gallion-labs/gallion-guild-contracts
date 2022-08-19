@@ -1,7 +1,8 @@
-import { DiamondLoupeFacet, PlayerFacet } from '../typechain-types';
+import { DiamondLoupeFacet } from '../typechain-types';
 import { ethers } from 'hardhat';
+import { Test1Facet } from '../typechain-types/facets';
 
-const { deployDiamond } = require('../scripts/deploy.ts');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
 const { FacetCutAction } = require('../scripts/libraries/diamond.ts');
 const { assert } = require('chai');
 
@@ -12,7 +13,7 @@ const { assert } = require('chai');
 // things, and have a fresh row to work with.
 describe('Cache bug test', async () => {
   let diamondLoupeFacet: DiamondLoupeFacet;
-  let playerFacet: PlayerFacet;
+  let test1Facet: Test1Facet;
   const ownerSel = '0x8da5cb5b';
 
   const sel0 = '0x19e3b533'; // fills up slot 1
@@ -48,14 +49,14 @@ describe('Cache bug test', async () => {
     const diamondAddress = await deployDiamond();
     const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress);
     diamondLoupeFacet = (await ethers.getContractAt('DiamondLoupeFacet', diamondAddress) as DiamondLoupeFacet);
-    const PlayerFacet = await ethers.getContractFactory('PlayerFacet');
-    playerFacet = (await PlayerFacet.deploy() as PlayerFacet);
-    await playerFacet.deployed();
+    const Test1Facet = await ethers.getContractFactory('Test1Facet');
+    test1Facet = (await Test1Facet.deploy() as Test1Facet);
+    await test1Facet.deployed();
 
     // add functions
     tx = await diamondCutFacet.diamondCut([
       {
-        facetAddress: playerFacet.address,
+        facetAddress: test1Facet.address,
         action: FacetCutAction.Add,
         functionSelectors: selectors
       }
@@ -86,8 +87,8 @@ describe('Cache bug test', async () => {
   });
 
   it('should not exhibit the cache bug', async () => {
-    // Get the playerFacet's registered functions
-    let selectors = await diamondLoupeFacet.facetFunctionSelectors(playerFacet.address);
+    // Get the test1Facet's registered functions
+    let selectors = await diamondLoupeFacet.facetFunctionSelectors(test1Facet.address);
 
     // Check individual correctness
     assert.isTrue(selectors.includes(sel0), 'Does not contain sel0');

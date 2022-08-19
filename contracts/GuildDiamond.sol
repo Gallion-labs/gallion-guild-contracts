@@ -10,7 +10,7 @@ pragma solidity ^0.8.0;
 
 import { LibDiamond } from "./libraries/LibDiamond.sol";
 import { IDiamondCut } from "./interfaces/IDiamondCut.sol";
-import { AppStorage } from "./libraries/LibAppStorage.sol";
+import { AppStorage, Rarity } from "./libraries/LibAppStorage.sol";
 
 contract GuildDiamond {
     AppStorage s;
@@ -28,6 +28,14 @@ contract GuildDiamond {
             functionSelectors: functionSelectors
         });
         LibDiamond.diamondCut(cut, address(0), "");
+
+        s.rarities = [
+            Rarity.level1,
+            Rarity.level2,
+            Rarity.level3,
+            Rarity.level4,
+            Rarity.level5
+        ];
     }
 
     // Find facet for function that is called and execute the
@@ -61,5 +69,9 @@ contract GuildDiamond {
         }
     }
 
-    receive() external payable {}
+    receive() external payable {
+        s.totalMaticBalance += msg.value;
+        s.communityMaticBalance += msg.value * s.rewardRatioFromIncome / 100;
+        s.lootboxMaticBalance = s.communityMaticBalance / 2;
+    }
 }

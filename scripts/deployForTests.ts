@@ -1,10 +1,10 @@
-import { getSelectors, FacetCutAction } from './libraries/diamond';
+import { FacetCutAction, getSelectors } from './libraries/diamond';
 import { ethers } from 'hardhat';
+import { Address } from '../types';
 
-// Comment to enable console output
-console.log = () => {};
-
-async function deployDiamond() {
+async function deployDiamond(): Promise<Address> {
+    // Comment to enable console output
+    const console = { log: (...any: any) => {} };
     const accounts = await ethers.getSigners();
     const contractOwner = accounts[0];
 
@@ -34,8 +34,11 @@ async function deployDiamond() {
     const FacetNames = [
         'DiamondLoupeFacet',
         'OwnershipFacet',
+        'TokensFacet',
+        'RulesFacet',
+        'TreasuryFacet',
         'PlayerFacet',
-        'LootboxFacet',
+        'LootboxFacet'
     ];
     const cut = [];
     for (const FacetName of FacetNames) {
@@ -60,28 +63,29 @@ async function deployDiamond() {
     let functionCall = diamondInit.interface.encodeFunctionData('init', [
         {
             gallionLabs: accounts[9].address,
-            guildAdmins: [accounts[2].address]
+            guildAdmins: [accounts[2].address],
+            rewardRatioFromIncome: 50
         }
     ]);
     tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
-    console.log('Diamond cut tx: ', tx.hash);
+    // console.log('Diamond cut tx: ', tx.hash);
     receipt = await tx.wait();
     if (!receipt.status) {
         throw Error(`Diamond upgrade failed: ${ tx.hash }`);
     }
-    console.log('Completed diamond cut');
-    return diamond.address;
+    // console.log('Completed diamond cut');
+    return diamond.address as Address;
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
-if (require.main === module) {
+/*if (require.main === module) {
     deployDiamond()
         .then(() => process.exit(0))
         .catch(error => {
             console.error(error);
             process.exit(1);
         });
-}
+}*/
 
-exports.deployDiamond = deployDiamond;
+export { deployDiamond };

@@ -1,7 +1,7 @@
-import {ethers} from 'hardhat';
-import {Address} from '../types';
-import {DiamondCutFacet, DiamondLoupeFacet, GuildDiamond, OwnershipFacet, Test1Facet} from '../typechain-types';
-import {SignerWithAddress} from '@nomiclabs/hardhat-ethers/signers';
+import { ethers } from 'hardhat';
+import { Address } from '../types';
+import { DiamondCutFacet, DiamondLoupeFacet, GuildDiamond, OwnershipFacet, Test1Facet } from '../typechain-types';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 const {
     getSelectors,
@@ -9,10 +9,10 @@ const {
     removeSelectors,
     findAddressPositionInFacets
 } = require('../scripts/libraries/diamond.ts');
-const {deployDiamond} = require('../scripts/deploy.ts');
-const {assert} = require('chai');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
+const { assert } = require('chai');
 
-const FacetCount = 5;
+const FacetCount = 8;
 const Account = {
     Owner: 0,
     NewOwner: 1,
@@ -26,6 +26,8 @@ const Account = {
 describe('Diamond test', async function () {
     let accounts: SignerWithAddress[] = [];
     let diamondAddress: Address;
+    let tokenERC20Address: Address;
+    let lootboxAddress: Address;
     let guildContract: GuildDiamond;
     let diamondCutFacet: DiamondCutFacet;
     let diamondLoupeFacet: DiamondLoupeFacet;
@@ -37,14 +39,14 @@ describe('Diamond test', async function () {
 
     before(async function () {
         accounts = await ethers.getSigners();
-        diamondAddress = await deployDiamond();
+        diamondAddress = await deployDiamond(tokenERC20Address, lootboxAddress);
         guildContract = (await ethers.getContractAt('GuildDiamond', diamondAddress) as GuildDiamond);
         diamondCutFacet = (await ethers.getContractAt('DiamondCutFacet', diamondAddress) as DiamondCutFacet);
         diamondLoupeFacet = (await ethers.getContractAt('DiamondLoupeFacet', diamondAddress) as DiamondLoupeFacet);
         ownershipFacet = (await ethers.getContractAt('OwnershipFacet', diamondAddress) as OwnershipFacet);
     });
 
-    it(`should have ${FacetCount} facets -- call to facetAddresses function`, async () => {
+    it(`should have ${ FacetCount } facets -- call to facetAddresses function`, async () => {
         for (const address of await diamondLoupeFacet.facetAddresses()) {
             addresses.push(address);
         }
@@ -83,7 +85,7 @@ describe('Diamond test', async function () {
         );
     });
 
-    it('should transfer ownership to "account 1"', async () => {
+    it('should transfer ownership to "NewOwner"', async () => {
         const ownershipFacet: OwnershipFacet = (await ethers.getContractAt('OwnershipFacet', diamondAddress)) as OwnershipFacet;
         await ownershipFacet.transferOwnership(accounts[Account.NewOwner].address);
         assert.equal(await ownershipFacet.owner(), accounts[Account.NewOwner].address);
@@ -101,10 +103,10 @@ describe('Diamond test', async function () {
                 action: FacetCutAction.Add,
                 functionSelectors: selectors
             }],
-            ethers.constants.AddressZero, '0x', {gasLimit: 800000});
+            ethers.constants.AddressZero, '0x', { gasLimit: 800000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         result = await diamondLoupeFacet.facetFunctionSelectors(test1Facet.address);
         assert.sameMembers(result, selectors);
@@ -120,17 +122,17 @@ describe('Diamond test', async function () {
         const selectors = getSelectors(Test1Facet).get(['supportsInterface(bytes4)']);
         const testFacetAddress = addresses[FacetCount];
         result = await diamondLoupeFacet.facetFunctionSelectors(testFacetAddress);
-        console.log('result: ', result);
+
         tx = await diamondCutFacet.connect(accounts[Account.NewOwner]).diamondCut(
             [{
                 facetAddress: testFacetAddress,
                 action: FacetCutAction.Replace,
                 functionSelectors: selectors
             }],
-            ethers.constants.AddressZero, '0x', {gasLimit: 800000});
+            ethers.constants.AddressZero, '0x', { gasLimit: 800000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         result = await diamondLoupeFacet.facetFunctionSelectors(testFacetAddress);
         assert.sameMembers(result, getSelectors(Test1Facet));
@@ -148,10 +150,10 @@ describe('Diamond test', async function () {
                 action: FacetCutAction.Add,
                 functionSelectors: selectors
             }],
-            ethers.constants.AddressZero, '0x', {gasLimit: 800000});
+            ethers.constants.AddressZero, '0x', { gasLimit: 800000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         result = await diamondLoupeFacet.facetFunctionSelectors(test2Facet.address);
         assert.sameMembers(result, selectors);
@@ -167,10 +169,10 @@ describe('Diamond test', async function () {
                 action: FacetCutAction.Remove,
                 functionSelectors: selectors
             }],
-            ethers.constants.AddressZero, '0x', {gasLimit: 800000});
+            ethers.constants.AddressZero, '0x', { gasLimit: 800000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         result = await diamondLoupeFacet.facetFunctionSelectors(addresses[FacetCount + 1]);
         assert.sameMembers(result, getSelectors(test2Facet).get(functionsToKeep));
@@ -186,10 +188,10 @@ describe('Diamond test', async function () {
                 action: FacetCutAction.Remove,
                 functionSelectors: selectors
             }],
-            ethers.constants.AddressZero, '0x', {gasLimit: 800000});
+            ethers.constants.AddressZero, '0x', { gasLimit: 800000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         result = await diamondLoupeFacet.facetFunctionSelectors(addresses[FacetCount]);
         assert.sameMembers(result, getSelectors(test1Facet).get(functionsToKeep));
@@ -208,10 +210,10 @@ describe('Diamond test', async function () {
                 action: FacetCutAction.Remove,
                 functionSelectors: selectors
             }],
-            ethers.constants.AddressZero, '0x', {gasLimit: 800000});
+            ethers.constants.AddressZero, '0x', { gasLimit: 800000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         facets = await diamondLoupeFacet.facets();
         assert.equal(facets.length, 2);
@@ -249,15 +251,15 @@ describe('Diamond test', async function () {
                 functionSelectors: getSelectors(Test2Facet)
             }
         ];
-        tx = await diamondCutFacet.connect(accounts[Account.NewOwner]).diamondCut(cut, ethers.constants.AddressZero, '0x', {gasLimit: 8000000});
+        tx = await diamondCutFacet.connect(accounts[Account.NewOwner]).diamondCut(cut, ethers.constants.AddressZero, '0x', { gasLimit: 8000000 });
         receipt = await tx.wait();
         if (!receipt.status) {
-            throw Error(`Diamond upgrade failed: ${tx.hash}`);
+            throw Error(`Diamond upgrade failed: ${ tx.hash }`);
         }
         const facets = await diamondLoupeFacet.facets();
         const facetAddresses = await diamondLoupeFacet.facetAddresses();
-        assert.equal(facetAddresses.length, FacetCount);
-        assert.equal(facets.length, FacetCount);
+        assert.equal(facetAddresses.length, 5);
+        assert.equal(facets.length, 5);
         assert.includeMembers(addresses, facetAddresses);
         assert.equal(facets[0][0], facetAddresses[0], 'first facet');
         assert.equal(facets[1][0], facetAddresses[1], 'second facet');
