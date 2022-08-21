@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity 0.8.13;
 
-import {AppStorage, Modifiers, Rarity} from "../libraries/LibAppStorage.sol";
+import {AppStorage, Rarity} from "../libraries/LibAppStorage.sol";
+import {Modifiers} from "../libraries/Modifiers.sol";
 import "../libraries/LibDiamond.sol";
 import "../libraries/LibLootbox.sol";
 import "../libraries/LibTokens.sol";

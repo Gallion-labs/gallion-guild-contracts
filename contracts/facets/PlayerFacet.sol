@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import {AppStorage, Modifiers, Player, Rarity} from "../libraries/LibAppStorage.sol";
+import {AppStorage, Player, Rarity} from "../libraries/LibAppStorage.sol";
+import {Modifiers} from "../libraries/Modifiers.sol";
 import "../libraries/LibLootbox.sol";
 
 contract PlayerFacet is Modifiers {

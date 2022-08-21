@@ -45,6 +45,10 @@ yarn
 ```console
 npx hardhat run scripts/deploy.js
 ```
+To verify the contract on polygonscan, run: _(.env.local required)_
+```console
+npx hardhat verify {contractAddress} --network polygon
+```
 
 ### Run tests:
 ```console

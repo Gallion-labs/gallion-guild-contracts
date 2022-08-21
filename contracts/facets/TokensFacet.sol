@@ -2,7 +2,8 @@
 pragma solidity 0.8.13;
 
 import {Context} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import {Modifiers, AppStorage} from "../libraries/LibAppStorage.sol";
+import {AppStorage} from "../libraries/LibAppStorage.sol";
+import {Modifiers} from "../libraries/Modifiers.sol";
 import "../libraries/LibTokens.sol";
 
 // Contains ERC1155 specific functions
@@ -86,7 +87,7 @@ contract TokensFacet is Modifiers, Context {
 
         emit LibTokens.TransferSingle(operator, from, to, id, amount);
 
-        LibTokens._afterTokenTransfer(operator, from, to, ids, amounts, data);
+        LibTokens._afterTokenTransfer(from, amounts);
     }
 
     function _safeBatchTransferFrom(
@@ -118,7 +119,7 @@ contract TokensFacet is Modifiers, Context {
 
         emit LibTokens.TransferBatch(operator, from, to, ids, amounts);
 
-        LibTokens._afterTokenTransfer(operator, from, to, ids, amounts, data);
+        LibTokens._afterTokenTransfer(from, amounts);
     }
 
     function _setApprovalForAll(

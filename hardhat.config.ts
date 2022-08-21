@@ -3,8 +3,11 @@
 import { task } from 'hardhat/config';
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
-
 require('@nomiclabs/hardhat-waffle');
+require("@nomiclabs/hardhat-etherscan");
+import { config } from 'dotenv';
+
+config({ path: '.env.local' });
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -29,5 +32,14 @@ module.exports = {
       enabled: true,
       runs: 200
     }
+  },
+  networks: {
+    hardhat: {},
+    polygon: {
+      url: process.env.POLYGON_RPC_PROVIDER
+    }
+  },
+  etherscan: {
+    apiKey: process.env.POLYGONSCAN_API_KEY,
   }
 }

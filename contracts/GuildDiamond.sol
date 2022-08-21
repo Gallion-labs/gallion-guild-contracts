@@ -10,7 +10,8 @@ pragma solidity ^0.8.0;
 
 import {LibDiamond} from "./libraries/LibDiamond.sol";
 import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
-import {AppStorage, Rarity, Modifiers} from "./libraries/LibAppStorage.sol";
+import {AppStorage, Rarity} from "./libraries/LibAppStorage.sol";
+import {Modifiers} from "./libraries/Modifiers.sol";
 
 contract GuildDiamond is Modifiers {
     constructor(address _contractOwner, address _diamondCutFacet) payable {

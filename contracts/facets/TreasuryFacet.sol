@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {AppStorage, Modifiers} from "../libraries/LibAppStorage.sol";
+import {AppStorage} from "../libraries/LibAppStorage.sol";
+import {Modifiers} from "../libraries/Modifiers.sol";
 
 contract TreasuryFacet is Modifiers {
 

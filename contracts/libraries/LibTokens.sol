@@ -29,7 +29,6 @@ library LibTokens {
     view
     returns (uint256[] memory)
     {
-        AppStorage storage s = LibDiamond.appStorage();
         uint256[] memory batchBalances = new uint256[](accounts.length);
 
         for (uint256 i = 0; i < accounts.length; ++i) {
@@ -57,7 +56,7 @@ library LibTokens {
         s._balances[id][to] += amount;
         emit TransferSingle(operator, address(0), to, id, amount);
 
-        _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
+        _afterTokenTransfer(address(0), amounts);
     }
 
     function mintBatch(
@@ -80,7 +79,7 @@ library LibTokens {
 
         emit TransferBatch(operator, address(0), to, ids, amounts);
 
-        _afterTokenTransfer(operator, address(0), to, ids, amounts, data);
+        _afterTokenTransfer(address(0), amounts);
     }
 
     function burn(
@@ -105,7 +104,7 @@ library LibTokens {
 
         emit TransferSingle(operator, from, address(0), id, amount);
 
-        _afterTokenTransfer(operator, from, address(0), ids, amounts, "");
+        _afterTokenTransfer(from, amounts);
     }
 
     function burnBatch(
@@ -134,7 +133,7 @@ library LibTokens {
 
         emit TransferBatch(operator, from, address(0), ids, amounts);
 
-        _afterTokenTransfer(operator, from, address(0), ids, amounts, "");
+        _afterTokenTransfer(from, amounts);
     }
 
     function _beforeTokenTransfer(
@@ -147,12 +146,8 @@ library LibTokens {
     ) internal {}
 
     function _afterTokenTransfer(
-        address operator,
         address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
+        uint256[] memory amounts
     ) internal {
         if (from == address(0)) {
             AppStorage storage s = LibDiamond.appStorage();
@@ -171,7 +166,7 @@ library LibTokens {
         return msg.sender;
     }
 
-    function _msgData() internal view returns (bytes calldata) {
+    function _msgData() internal pure returns (bytes calldata) {
         return msg.data;
     }
 }
