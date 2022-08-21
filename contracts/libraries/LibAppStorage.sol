@@ -73,6 +73,11 @@ contract Modifiers {
         _;
     }
 
+    modifier onlyGuildAdminOrGallion() {
+        require(s.guildAdmins[LibMeta.msgSender()].createdAt > 0 || LibMeta.msgSender() == s.gallionLabs, "NOT_ALLOWED: Only Gallion can call this function");
+        _;
+    }
+
     modifier onlyGallion() {
         require(LibMeta.msgSender() == s.gallionLabs, "NOT_ALLOWED: Only Gallion can call this function");
         _;

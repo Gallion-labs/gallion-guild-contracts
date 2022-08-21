@@ -30,7 +30,7 @@ contract PlayerFacet is Modifiers {
     /// @notice Add a player
     /// @dev This function throws for queries about the zero address and already existing players.
     /// @param playerAddress Address of the player to add
-    function addPlayer(address playerAddress) external onlyGuildAdmin playerNotExists(playerAddress) {
+    function addPlayer(address playerAddress) external onlyGuildAdminOrGallion playerNotExists(playerAddress) {
         s.players[playerAddress] = Player(block.timestamp, 0, 0);
         s.nPlayers++;
     }
@@ -38,14 +38,14 @@ contract PlayerFacet is Modifiers {
     /// @notice Level-up a player
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress Address of the player to level-up
-    function levelUp(address playerAddress) external onlyGallion playerExists(playerAddress) {
+    function levelUp(address playerAddress) external onlyGuildAdminOrGallion playerExists(playerAddress) {
         LibLootbox.awardLevelUpLootbox(playerAddress);
     }
 
     /// @notice Remove a player
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress Address of the player to remove
-    function removePlayer(address playerAddress) external onlyGuildAdmin playerExists(playerAddress) {
+    function removePlayer(address playerAddress) external onlyGuildAdminOrGallion playerExists(playerAddress) {
         delete s.players[playerAddress];
         s.nPlayers--;
     }
