@@ -4,7 +4,7 @@ import { RulesFacet, } from '../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 
-const { deployDiamond } = require('../scripts/deploy.ts');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
 
 const Account = {
     Gallion: 0,

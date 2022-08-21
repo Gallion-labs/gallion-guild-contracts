@@ -9,7 +9,7 @@ const {
     removeSelectors,
     findAddressPositionInFacets
 } = require('../scripts/libraries/diamond.ts');
-const { deployDiamond } = require('../scripts/deploy.ts');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
 const { assert } = require('chai');
 
 const FacetCount = 8;

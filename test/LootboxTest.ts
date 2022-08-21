@@ -6,7 +6,7 @@ import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 import { logTokensWon } from './utils';
 
-const { deployDiamond } = require('../scripts/deploy.ts');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
 
 const Account = {
     Gallion: 0,

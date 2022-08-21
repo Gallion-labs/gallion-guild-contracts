@@ -6,7 +6,8 @@
     "test": "npx hardhat test",
     "prettier": "prettier --write contracts/**/*.sol",
     "solhint": "solhint 'contracts/**/*.sol'",
-    "compile": "npx hardhat compile --force"
+    "compile": "npx hardhat compile --force",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,7 @@
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@openzeppelin/contracts": "^4.6.0",
     "@typechain/ethers-v5": "^10.1.0",
-    "@typechain/hardhat": "^6.1.0",
+    "@typechain/hardhat": "^6.1.2",
     "@types/chai": "^4.2.21",
     "@types/debug": "^4.1.7",
     "@types/mocha": "^9.1.1",

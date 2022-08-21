@@ -1,9 +1,8 @@
 /* global ethers */
 
-import { Contract } from 'ethers';
-import { ethers } from 'hardhat';
+import { ethers, Contract } from 'ethers';
 import { Address } from '../../types';
-import { IDiamondLoupe } from '../../typechain-types/facets/DiamondLoupeFacet';
+import { IDiamondLoupe } from '../../typechain-types/contracts/facets/DiamondLoupeFacet';
 import FacetStruct = IDiamondLoupe.FacetStruct;
 
 export const FacetCutAction = { Add: 0, Replace: 1, Remove: 2 };

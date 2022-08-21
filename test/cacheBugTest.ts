@@ -1,9 +1,9 @@
 import { DiamondLoupeFacet } from '../typechain-types';
 import { ethers } from 'hardhat';
-import { Test1Facet } from '../typechain-types/facets';
+import { Test1Facet } from '../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-const { deployDiamond } = require('../scripts/deploy.ts');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
 const { FacetCutAction } = require('../scripts/libraries/diamond.ts');
 const { assert } = require('chai');
 

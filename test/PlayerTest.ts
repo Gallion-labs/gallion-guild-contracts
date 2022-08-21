@@ -5,7 +5,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { logTokensWon } from './utils';
 
-const { deployDiamond } = require('../scripts/deploy.ts');
+const { deployDiamond } = require('../scripts/deployForTests.ts');
 const { assert } = require('chai');
 
 const Account = {
