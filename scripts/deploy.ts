@@ -1,5 +1,5 @@
 import { FacetCutAction, getSelectors } from './libraries/diamond';
-import { ethers, providers } from 'ethers';
+import { ethers } from 'ethers';
 import { Address } from '../types';
 import Debug from 'debug';
 import chalk from 'chalk';
@@ -15,11 +15,20 @@ import PlayerFacetArtifact from '../artifacts/contracts/facets/PlayerFacet.sol/P
 import LootboxFacetArtifact from '../artifacts/contracts/facets/LootboxFacet.sol/LootboxFacet.json';
 import IDiamondCutArtifact from '../artifacts/contracts/interfaces/IDiamondCut.sol/IDiamondCut.json';
 import { DiamondCutFacet } from '../typechain-types';
+import { GasStation, GasStationData } from './gasStation';
+import { Network } from '@ethersproject/networks';
 
 const debug = Debug('gallion:contracts:deploy');
 
 async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rewardRatioFromIncome: number): Promise<Address> {
-    const provider = new ethers.providers.JsonRpcProvider("https://polygon-rpc.com");
+    const gasStationData: GasStationData = await GasStation.getGasData();
+    const matic: Network = {
+        name: 'matic',
+        chainId: 137,
+        _defaultProvider: (providers) => new providers.JsonRpcProvider('https://polygon-rpc.com')
+    }
+    const provider = ethers.getDefaultProvider(matic);
+
     const account = new ethers.Wallet(
         process.env.ITEM_MANAGER as string,
         provider
@@ -27,13 +36,13 @@ async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rew
 
     // deploy DiamondCutFacet
     const DiamondCutFacet = await new ethers.ContractFactory(DiamondCutFacetArtifact.abi, DiamondCutFacetArtifact.bytecode, account);
-    const diamondCutFacet = await DiamondCutFacet.deploy();
+    const diamondCutFacet = await DiamondCutFacet.deploy(gasStationData);
     await diamondCutFacet.deployed();
     debug(chalk.grey(`DiamondCutFacet deployed: ${ chalk.greenBright(diamondCutFacet.address) }`));
 
     // deploy Guild Diamond
     const GuildDiamond = await new ethers.ContractFactory(GuildDiamondArtifact.abi, GuildDiamondArtifact.bytecode, account);
-    const diamond = await GuildDiamond.deploy(account, diamondCutFacet.address);
+    const diamond = await GuildDiamond.deploy(account.address, diamondCutFacet.address, gasStationData);
     await diamond.deployed();
     debug(chalk.grey(`Diamond deployed: ${ chalk.greenBright(diamond.address) }`));
 
@@ -41,7 +50,7 @@ async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rew
     // DiamondInit provides a function that is called when the diamond is upgraded to initialize state variables
     // Read about how the diamondCut function works here: https://eips.ethereum.org/EIPS/eip-2535#addingreplacingremoving-functions
     const DiamondInit = await new ethers.ContractFactory(DiamondInitArtifact.abi, DiamondInitArtifact.bytecode, account);
-    const diamondInit = await DiamondInit.deploy();
+    const diamondInit = await DiamondInit.deploy(gasStationData);
     await diamondInit.deployed();
     debug(chalk.grey(`DiamondInit deployed: ${ chalk.greenBright(diamondInit.address) }`));
 
@@ -79,7 +88,7 @@ async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rew
     debug(chalk.grey(`Deploying ${ facets.length } facets...`));
     const cut = [];
     for (const Facet of facets) {
-        const facet = await Facet.contract.deploy();
+        const facet = await Facet.contract.deploy(gasStationData);
         await facet.deployed();
         debug(chalk.grey(`    ${ Facet.name } deployed: ${ chalk.greenBright(facet.address) }`));
         cut.push({
@@ -99,13 +108,13 @@ async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rew
     // call to init function
     let functionCall = diamondInit.interface.encodeFunctionData('init', [
         {
-            gallionLabs: account,
+            gallionLabs: account.address,
             guildAdmins,
             rewardRatioFromIncome,
             guildMainWallet
         }
     ]);
-    tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);
+    tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall, gasStationData);
     // debug('Diamond cut tx: ', tx.hash);
     receipt = await tx.wait();
     if (!receipt.status) {
