@@ -1,42 +1,29 @@
 import { ethers } from 'hardhat';
 import { Address } from '../types';
-import { DiamondCutFacet, DiamondLoupeFacet, GuildDiamond, OwnershipFacet, PlayerFacet, } from '../typechain-types';
+import { PlayerFacet } from '../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { logTokensWon } from './utils';
 
-const { deployDiamond } = require('../scripts/deployForTests.ts');
+const { deployDiamond } = require('../scripts/deploy.ts');
 const { assert } = require('chai');
 
 const Account = {
-    Owner: 0,
+    Gallion: 0,
     NewOwner: 1,
     Admin1: 2,
     Admin2: 3,
     Player1: 4,
-    Player2: 5,
-    Gallion: 9
+    Player2: 5
 };
 
 describe('Player Facet test', async function () {
     let accounts: SignerWithAddress[] = [];
     let diamondAddress: Address;
-    let tokenAddress: Address;
-    let lootboxAddress: Address;
-    let guildContract: GuildDiamond;
-    let diamondCutFacet: DiamondCutFacet;
-    let diamondLoupeFacet: DiamondLoupeFacet;
-    let ownershipFacet: OwnershipFacet;
-    let playerFacet: PlayerFacet;
 
     before(async function () {
         accounts = await ethers.getSigners();
-        diamondAddress = await deployDiamond(tokenAddress, lootboxAddress);
-        guildContract = (await ethers.getContractAt('GuildDiamond', diamondAddress) as GuildDiamond);
-        diamondCutFacet = (await ethers.getContractAt('DiamondCutFacet', diamondAddress) as DiamondCutFacet);
-        diamondLoupeFacet = (await ethers.getContractAt('DiamondLoupeFacet', diamondAddress) as DiamondLoupeFacet);
-        ownershipFacet = (await ethers.getContractAt('OwnershipFacet', diamondAddress) as OwnershipFacet);
-        playerFacet = (await ethers.getContractAt('PlayerFacet', diamondAddress) as PlayerFacet);
+        diamondAddress = await deployDiamond([accounts[Account.Admin1].address], accounts[Account.Admin1].address, 50);
     });
 
     after(async function () {

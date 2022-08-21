@@ -1,42 +1,32 @@
 import { ethers } from 'hardhat';
 import { Address } from '../types';
-import { DiamondCutFacet, DiamondLoupeFacet, GuildDiamond, LootboxFacet, PlayerFacet, TokensFacet } from '../typechain-types';
+import { LootboxFacet, PlayerFacet, TokensFacet } from '../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
 import { logTokensWon } from './utils';
 
-const { deployDiamond, deployLootboxERC721 } = require('../scripts/deployForTests.ts');
-const { assert } = require('chai');
+const { deployDiamond } = require('../scripts/deploy.ts');
 
 const Account = {
-    Owner: 0,
+    Gallion: 0,
     NewOwner: 1,
     Admin1: 2,
     Admin2: 3,
     Player1: 4,
-    Player2: 5,
-    Gallion: 9
+    Player2: 5
 };
 
 describe('Lootbox Facet test', async function () {
     let accounts: SignerWithAddress[] = [];
     let diamondAddress: Address;
-    let tokenAddress: Address;
-    let lootboxAddress: Address;
-    let guildContract: GuildDiamond;
-    let diamondCutFacet: DiamondCutFacet;
-    let diamondLoupeFacet: DiamondLoupeFacet;
     let tokensFacet: TokensFacet;
     let playerFacet: PlayerFacet;
     let lootboxFacet: LootboxFacet;
 
     before(async function () {
         accounts = await ethers.getSigners();
-        diamondAddress = await deployDiamond();
-        guildContract = (await ethers.getContractAt('GuildDiamond', diamondAddress) as GuildDiamond);
-        diamondCutFacet = (await ethers.getContractAt('DiamondCutFacet', diamondAddress) as DiamondCutFacet);
-        diamondLoupeFacet = (await ethers.getContractAt('DiamondLoupeFacet', diamondAddress) as DiamondLoupeFacet);
+        diamondAddress = await deployDiamond([accounts[Account.Admin1].address], accounts[Account.Admin1].address, 50);
         tokensFacet = (await ethers.getContractAt('TokensFacet', diamondAddress) as TokensFacet);
         playerFacet = (await ethers.getContractAt('PlayerFacet', diamondAddress) as PlayerFacet);
         lootboxFacet = (await ethers.getContractAt('LootboxFacet', diamondAddress) as LootboxFacet);
@@ -56,7 +46,7 @@ describe('Lootbox Facet test', async function () {
     });
 
     it('should mint a lvl1 lootbox for player 1', async () => {
-        const result = await lootboxFacet
+        await lootboxFacet
             .connect(accounts[Account.Gallion])
             .award(accounts[Account.Player1].address, LootboxTokenIds.Level1, 1);
         const p1Lootboxes = await lootboxFacet.list(accounts[Account.Player1].address);

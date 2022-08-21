@@ -84,4 +84,5 @@ export function findAddressPositionInFacets(facetAddress: Address, facets: Facet
             return i;
         }
     }
+    return;
 }

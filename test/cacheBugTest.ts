@@ -1,8 +1,9 @@
 import { DiamondLoupeFacet } from '../typechain-types';
 import { ethers } from 'hardhat';
 import { Test1Facet } from '../typechain-types/facets';
+import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
-const { deployDiamond } = require('../scripts/deployForTests.ts');
+const { deployDiamond } = require('../scripts/deploy.ts');
 const { FacetCutAction } = require('../scripts/libraries/diamond.ts');
 const { assert } = require('chai');
 
@@ -12,6 +13,15 @@ const { assert } = require('chai');
 // selector slot array, so we'll fill up a new slot with
 // things, and have a fresh row to work with.
 describe('Cache bug test', async () => {
+  const Account = {
+    Gallion: 0,
+    NewOwner: 1,
+    Admin1: 2,
+    Admin2: 3,
+    Player1: 4,
+    Player2: 5
+  };
+  let accounts: SignerWithAddress[] = [];
   let diamondLoupeFacet: DiamondLoupeFacet;
   let test1Facet: Test1Facet;
   const ownerSel = '0x8da5cb5b';
@@ -29,6 +39,7 @@ describe('Cache bug test', async () => {
   const sel10 = '0xcbb835fb'; // fills up slot 2
 
   before(async function () {
+    accounts = await ethers.getSigners();
     let tx;
     let receipt;
 
@@ -46,7 +57,7 @@ describe('Cache bug test', async () => {
       sel10
     ];
 
-    const diamondAddress = await deployDiamond();
+    const diamondAddress = await deployDiamond([accounts[Account.Admin1].address], accounts[Account.Admin1].address, 50);
     const diamondCutFacet = await ethers.getContractAt('DiamondCutFacet', diamondAddress);
     diamondLoupeFacet = (await ethers.getContractAt('DiamondLoupeFacet', diamondAddress) as DiamondLoupeFacet);
     const Test1Facet = await ethers.getContractFactory('Test1Facet');
