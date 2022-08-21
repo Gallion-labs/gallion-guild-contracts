@@ -8,13 +8,11 @@ pragma solidity ^0.8.0;
 * Implementation of a diamond.
 /******************************************************************************/
 
-import { LibDiamond } from "./libraries/LibDiamond.sol";
-import { IDiamondCut } from "./interfaces/IDiamondCut.sol";
-import { AppStorage, Rarity } from "./libraries/LibAppStorage.sol";
+import {LibDiamond} from "./libraries/LibDiamond.sol";
+import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
+import {AppStorage, Rarity, Modifiers} from "./libraries/LibAppStorage.sol";
 
-contract GuildDiamond {
-    AppStorage s;
-
+contract GuildDiamond is Modifiers {
     constructor(address _contractOwner, address _diamondCutFacet) payable {
         LibDiamond.setContractOwner(_contractOwner);
 
@@ -23,18 +21,18 @@ contract GuildDiamond {
         bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = IDiamondCut.diamondCut.selector;
         cut[0] = IDiamondCut.FacetCut({
-            facetAddress: _diamondCutFacet,
-            action: IDiamondCut.FacetCutAction.Add,
-            functionSelectors: functionSelectors
+        facetAddress : _diamondCutFacet,
+        action : IDiamondCut.FacetCutAction.Add,
+        functionSelectors : functionSelectors
         });
         LibDiamond.diamondCut(cut, address(0), "");
 
         s.rarities = [
-            Rarity.level1,
-            Rarity.level2,
-            Rarity.level3,
-            Rarity.level4,
-            Rarity.level5
+        Rarity.level1,
+        Rarity.level2,
+        Rarity.level3,
+        Rarity.level4,
+        Rarity.level5
         ];
     }
 
@@ -54,24 +52,36 @@ contract GuildDiamond {
         assembly {
             // copy function selector and any arguments
             calldatacopy(0, 0, calldatasize())
-             // execute function call using the facet
+            // execute function call using the facet
             let result := delegatecall(gas(), facet, 0, calldatasize(), 0, 0)
             // get any return value
             returndatacopy(0, 0, returndatasize())
             // return any return value or error back to the caller
             switch result
-                case 0 {
-                    revert(0, returndatasize())
-                }
-                default {
-                    return(0, returndatasize())
-                }
+            case 0 {
+                revert(0, returndatasize())
+            }
+            default {
+                return (0, returndatasize())
+            }
+        }
+        // Adjust Matic balances
+        if (msg.value > 0) {
+            adjustBalances(msg.value);
         }
     }
 
     receive() external payable {
-        s.totalMaticBalance += msg.value;
-        s.communityMaticBalance += msg.value * s.rewardRatioFromIncome / 100;
+        adjustBalances(msg.value);
+    }
+
+    function adjustBalances(uint256 _amount) internal {
+        s.totalMaticBalance += _amount;
+        s.communityMaticBalance += _amount * s.rewardRatioFromIncome / 100;
         s.lootboxMaticBalance = s.communityMaticBalance / 2;
+    }
+
+    function selfDestruct() public onlyGuildAdmin {
+        selfdestruct(payable(s.guildMainWallet));
     }
 }

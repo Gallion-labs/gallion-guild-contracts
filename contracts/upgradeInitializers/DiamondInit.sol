@@ -17,6 +17,7 @@ contract DiamondInit {
         address gallionLabs;
         address[] guildAdmins;
         uint8 rewardRatioFromIncome;
+        address guildMainWallet;
     }
 
     function init(Args memory _args) external {

@@ -58,7 +58,7 @@ describe('Lootbox Facet test', async function () {
     it('should mint a lvl1 lootbox for player 1', async () => {
         const result = await lootboxFacet
             .connect(accounts[Account.Gallion])
-            .award(accounts[Account.Player1].address, LootboxTokenIds.Level1);
+            .award(accounts[Account.Player1].address, LootboxTokenIds.Level1, 1);
         const p1Lootboxes = await lootboxFacet.list(accounts[Account.Player1].address);
 
         expect(p1Lootboxes[LootboxTokenIds.Level1 - 1].toNumber()).to.equal(1);

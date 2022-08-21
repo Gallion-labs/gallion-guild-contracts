@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 struct AppStorage {
     bytes32 domainSeparator;
     address gallionLabs;
-    address guildContract;
+    address guildMainWallet;
     uint256 guildTokenId; // Guild token id (ERC1155)
     Rarity[] rarities;
     mapping(Rarity => uint256) lootboxIds; // Lootbox id by rarity (ERC1155)
@@ -36,7 +36,8 @@ struct Admin {
 
 struct Player {
     uint createdAt;
-    uint16 level;
+    uint256 totalMintedLoootboxes;
+    uint256 totalOpenedLoootboxes;
 }
 
 enum Rarity {

@@ -64,7 +64,8 @@ async function deployDiamond(): Promise<Address> {
         {
             gallionLabs: accounts[9].address,
             guildAdmins: [accounts[2].address],
-            rewardRatioFromIncome: 50
+            rewardRatioFromIncome: 50,
+            guildMainWallet: accounts[2].address,
         }
     ]);
     tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);

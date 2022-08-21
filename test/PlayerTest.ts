@@ -62,7 +62,6 @@ describe('Player Facet test', async function () {
         const player: PlayerFacet.PlayerInfoStructOutput = await playerFacet
             .connect(accounts[Account.Player1])
             .player(accounts[Account.Player1].address);
-        assert.equal(player.level, 1);
         const balances: number[] = player.balances.map(balance => balance.toNumber());
         expect(balances).to.be.an('array').that.include(1);
         if (balances[1] === 1) {

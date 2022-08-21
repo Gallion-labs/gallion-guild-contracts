@@ -19,17 +19,17 @@ contract LootboxFacet is Modifiers {
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to award the lootbox to
     /// @param lootboxTokenId The lootbox token id  to award (1-5)
-    function award(address playerAddress, uint256 lootboxTokenId) public playerExists(playerAddress) onlyGallion returns (bool) {
-        LibTokens.mint(playerAddress, lootboxTokenId, 1, "0x0");
-        return true;
+    /// @param amount The amount of lootboxes to award
+    function award(address playerAddress, uint256 lootboxTokenId, uint256 amount) public playerExists(playerAddress) onlyGallion  {
+        LibLootbox.mint(playerAddress, lootboxTokenId, amount);
     }
 
     /// @notice Open a lootbox
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to query
     /// @param lootboxTokenId The lootbox to open
-    function open(address playerAddress, uint256 lootboxTokenId) external noReentrant playerExists(playerAddress) onlyGallion returns (bool) {
+    function open(address playerAddress, uint256 lootboxTokenId) external noReentrant playerExists(playerAddress) onlyGallion {
         require(s._balances[lootboxTokenId][playerAddress] >= 1, "Player does not own a lootbox of this rarity");
-        return LibLootbox.open(playerAddress, lootboxTokenId);
+        LibLootbox.open(playerAddress, lootboxTokenId);
     }
 }

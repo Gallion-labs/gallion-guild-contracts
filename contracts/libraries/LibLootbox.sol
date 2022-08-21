@@ -47,15 +47,14 @@ library LibLootbox {
         }
         _lootboxTokenId = s.lootboxIds[rarity];
         // mint the lootbox
-        LibTokens.mint(playerAddress, _lootboxTokenId, 1, "0x0");
+        mint(playerAddress, _lootboxTokenId, 1);
     }
 
     /// @notice Open a lootbox
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to query
     /// @param lootboxTokenId The lootbox to open
-    /// @return true if the lootbox was successfully opened
-    function open(address playerAddress, uint256 lootboxTokenId) internal returns (bool) {
+    function open(address playerAddress, uint256 lootboxTokenId) internal {
         AppStorage storage s = LibDiamond.appStorage();
         uint rewardFactor = s.rewardFactorByLootboxRarity[s.lootboxRarity[lootboxTokenId]];
         // calc the Matic reward according to the guild balance
@@ -74,10 +73,23 @@ library LibLootbox {
         // burn the lootbox
         LibTokens.burn(playerAddress, lootboxTokenId, 1);
         // adjust guild balances
-        s.communityMaticBalance > s.lootboxMaticBalance ? s.lootboxMaticBalance -= playerReward : s.communityMaticBalance -= playerReward;
+        s.communityMaticBalance -= playerReward;
+        if (s.communityMaticBalance < s.lootboxMaticBalance) {
+            s.lootboxMaticBalance = s.communityMaticBalance / 2;
+        }
         s.totalMaticBalance -= playerReward;
         s.totalOpenedLoootboxes++;
+        s.players[playerAddress].totalOpenedLoootboxes++;
         emit OpenLootboxEvent(playerAddress, lootboxTokenId);
-        return success;
+    }
+
+    /// @notice Mint a lootbox for a player
+    /// @param playerAddress The player to mint the lootbox for
+    /// @param lootboxTokenId The type of lootbox to mint
+    /// @param amount The amount of lootboxes to mint
+    function mint(address playerAddress, uint256 lootboxTokenId, uint256 amount) internal {
+        AppStorage storage s = LibDiamond.appStorage();
+        LibTokens.mint(playerAddress, lootboxTokenId, amount, "0x0");
+        s.players[playerAddress].totalMintedLoootboxes += amount;
     }
 }

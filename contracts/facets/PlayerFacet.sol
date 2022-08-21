@@ -5,12 +5,11 @@ import {AppStorage, Modifiers, Player, Rarity} from "../libraries/LibAppStorage.
 import "../libraries/LibLootbox.sol";
 
 contract PlayerFacet is Modifiers {
-    event LevelUpEvent(address player, uint16 level);
+    event LevelUpEvent(address player);
 
     struct PlayerInfo {
         address id;
         uint createdAt;
-        uint16 level;
         uint256[] balances;
     }
 
@@ -21,7 +20,6 @@ contract PlayerFacet is Modifiers {
     function player(address playerAddress) public view playerExists(playerAddress) returns (PlayerInfo memory _player) {
         _player.id = playerAddress;
         _player.createdAt = s.players[playerAddress].createdAt;
-        _player.level = s.players[playerAddress].level;
         _player.balances = new uint256[](s.rarities.length + 1);
         for (uint i = 0; i < s.rarities.length + 1; i++) {
             _player.balances[i] = s._balances[i][playerAddress];
@@ -33,7 +31,7 @@ contract PlayerFacet is Modifiers {
     /// @dev This function throws for queries about the zero address and already existing players.
     /// @param playerAddress Address of the player to add
     function addPlayer(address playerAddress) external onlyGuildAdmin playerNotExists(playerAddress) {
-        s.players[playerAddress] = Player(block.timestamp, 0);
+        s.players[playerAddress] = Player(block.timestamp, 0, 0);
         s.nPlayers++;
     }
 
@@ -41,7 +39,6 @@ contract PlayerFacet is Modifiers {
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress Address of the player to level-up
     function levelUp(address playerAddress) external onlyGallion playerExists(playerAddress) {
-        s.players[playerAddress].level++;
         LibLootbox.awardLevelUpLootbox(playerAddress);
     }
 
