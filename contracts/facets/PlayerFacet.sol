@@ -28,6 +28,22 @@ contract PlayerFacet is Modifiers {
         return _player;
     }
 
+    function playerTotalMintedLootboxes(address playerAddress) public view returns (uint256[] memory) {
+        return s.totalMintedLoootboxesByPlayer[playerAddress];
+    }
+
+    function playerTotalOpenedLootboxes(address playerAddress) public view returns (uint256[] memory) {
+        return s.totalOpenedLoootboxesByPlayer[playerAddress];
+    }
+
+    function playerTotalMaticEarned(address playerAddress) public view returns (uint256) {
+        return s.totalMaticEarnedByPlayer[playerAddress];
+    }
+
+    function playerTotalGuildTokenEarned(address playerAddress) public view returns (uint256) {
+        return s.totalGuildTokenEarnedByPlayer[playerAddress];
+    }
+
     /// @notice Add a player
     /// @dev This function throws for queries about the zero address and already existing players.
     /// @param playerAddress Address of the player to add

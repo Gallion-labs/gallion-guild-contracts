@@ -64,7 +64,7 @@ describe('Lootbox Facet test', async function () {
         expect(p1Lootboxes[LootboxTokenIds.Level1 - 1].toNumber()).to.equal(0, 'Player 1 should not have any lootboxes anymore');
         const playerRawMaticBalance: BigNumber = await ethers.provider.getBalance(accounts[Account.Player1].address);
         const playerMaticBalance = parseInt(ethers.utils.formatEther(playerRawMaticBalance));
-        const playerGuildTokenBalance = await tokensFacet.balanceOf(accounts[Account.Player1].address, 0);
+        const playerGuildTokenBalance = await tokensFacet['balanceOf(address,uint256)'](accounts[Account.Player1].address, 0);
         expect(playerMaticBalance).to.be.above(10_000, 'Player 1 should have some Matic tokens');
         logTokensWon('Player1', 'Matic tokens', playerMaticBalance - 10_000);
         logTokensWon('Player1', 'Guild tokens', playerGuildTokenBalance.toNumber());

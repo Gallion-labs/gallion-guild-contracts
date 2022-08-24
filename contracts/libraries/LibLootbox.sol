@@ -54,7 +54,7 @@ library LibLootbox {
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to query
     /// @param lootboxTokenId The lootbox to open
-    function open(address playerAddress, uint256 lootboxTokenId) internal returns (LootboxContent memory) {
+    function open(address playerAddress, uint256 lootboxTokenId) internal {
         AppStorage storage s = LibDiamond.appStorage();
         uint rewardFactor = s.rewardFactorByLootboxRarity[s.lootboxRarity[lootboxTokenId]];
         // calc the Matic reward according to the guild balance
@@ -80,8 +80,11 @@ library LibLootbox {
         s.totalMaticBalance -= playerReward;
         s.totalOpenedLoootboxes++;
         s.players[playerAddress].totalOpenedLoootboxes++;
+        s.lastLootboxContents[playerAddress] = LootboxContent(s.guildTokensByLootbox[Rarity.level1], playerReward);
+        s.totalOpenedLoootboxesByPlayer[playerAddress][lootboxTokenId]++;
+        s.totalMaticEarnedByPlayer[playerAddress] += playerReward;
+        s.totalGuildTokenEarnedByPlayer[playerAddress] += s.guildTokensByLootbox[Rarity.level1];
         emit OpenLootboxEvent(playerAddress, lootboxTokenId);
-        return LootboxContent(playerReward, s.guildTokensByLootbox[Rarity.level1]);
     }
 
     /// @notice Mint a lootbox for a player
@@ -92,5 +95,6 @@ library LibLootbox {
         AppStorage storage s = LibDiamond.appStorage();
         LibTokens.mint(playerAddress, lootboxTokenId, amount, "0x0");
         s.players[playerAddress].totalMintedLoootboxes += amount;
+        s.totalMintedLoootboxesByPlayer[playerAddress][lootboxTokenId] += amount;
     }
 }

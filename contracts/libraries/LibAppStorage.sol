@@ -15,6 +15,11 @@ struct AppStorage {
     mapping(uint256 => mapping(address => uint256)) _balances; // Tokens balances (ERC1155)
     mapping(address => uint256) investments;
     mapping(Rarity => uint256) guildTokensByLootbox; // Guild tokens by lootbox rarity (ERC1155)
+    mapping(address => LootboxContent) lastLootboxContents; // Last lootbox contents by player
+    mapping(address => uint256[]) totalMintedLoootboxesByPlayer; // Total minted lootboxes by rarity
+    mapping(address => uint256[]) totalOpenedLoootboxesByPlayer; // Total opened lootboxes by rarity
+    mapping(address => uint256) totalMaticEarnedByPlayer; // Total Matic earned by player
+    mapping(address => uint256) totalGuildTokenEarnedByPlayer; // Total guild token earned by player
     uint256 totalMintedLoootboxes;
     uint256 totalOpenedLoootboxes;
     uint256 totalMaticBalance;
@@ -29,6 +34,8 @@ struct AppStorage {
     uint256 nPlayers;
     bool locked;
     string baseUri;
+    string name;
+    string symbol;
 }
 
 struct Admin {

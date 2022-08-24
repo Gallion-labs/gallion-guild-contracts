@@ -16,13 +16,33 @@ contract TokensFacet is Modifiers, Context {
         return LibTokens.balanceOf(account, id);
     }
 
+    function balanceOf(address account) public view virtual returns (uint256) {
+        return LibTokens.balanceOf(account, 0);
+    }
+
     function uri(uint256 _id) external view returns (string memory) {
         require(_id < 5, "TokensFacet: Token id not found");
         return LibUtils.strWithUint(s.baseUri, _id);
     }
 
+    function name() external view returns (string memory) {
+        return s.name;
+    }
+
+    function symbol() external view returns (string memory) {
+        return s.symbol;
+    }
+
     function setBaseUri(string memory baseUri) public onlyGallion {
         s.baseUri = baseUri;
+    }
+
+    function setName(string memory _name) public onlyGallion {
+        s.name = _name;
+    }
+
+    function setSymbol(string memory _symbol) public onlyGallion {
+        s.symbol = _symbol;
     }
 
     function balanceOfBatch(address[] memory accounts, uint256[] memory ids)

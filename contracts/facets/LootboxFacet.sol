@@ -16,6 +16,10 @@ contract LootboxFacet is Modifiers {
         _lootboxBalances = LibLootbox.list(playerAddress);
     }
 
+    function getLastLootboxContents(address playerAddress) public view returns (LootboxContent memory) {
+        return s.lastLootboxContents[playerAddress];
+    }
+
     /// @notice Award a lootbox
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to award the lootbox to
@@ -29,9 +33,9 @@ contract LootboxFacet is Modifiers {
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to query
     /// @param lootboxTokenId The lootbox to open
-    function open(address playerAddress, uint256 lootboxTokenId) external noReentrant playerExists(playerAddress) onlyGallion returns (LootboxContent memory) {
+    function open(address playerAddress, uint256 lootboxTokenId) external noReentrant playerExists(playerAddress) onlyGallion {
         require(s._balances[lootboxTokenId][playerAddress] >= 1, "Player does not own a lootbox of this rarity");
-        return LibLootbox.open(playerAddress, lootboxTokenId);
+        LibLootbox.open(playerAddress, lootboxTokenId);
     }
 
     function getTotalMintedLoootboxes() public view returns (uint256) {
