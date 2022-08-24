@@ -104,6 +104,7 @@ dist
 .tern-port
 
 typechain-types/
+artifacts/
 cache/
 
 yarn.lock
