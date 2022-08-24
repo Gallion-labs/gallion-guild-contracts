@@ -10,15 +10,11 @@ export abstract class GasStation {
     private static readonly DefaultGasData: GasData = {
         fast: {
             maxPriorityFee: 45,
-            maxFee: 45,
-        },
-    }
+            maxFee: 45
+        }
+    };
 
     public static async getGasData(): Promise<GasStationData> {
-        if (!this.GasStationUrl) {
-            return this.getGasStationData(this.DefaultGasData);
-        }
-
         try {
             const response = await axios.get<GasData>(this.GasStationUrl);
             if (response?.data?.fast?.maxPriorityFee) {

@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "Modifiers",
+  "sourceName": "contracts/libraries/Modifiers.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220a39024e32ba40ca0fcedea15170e8d4bc08539520305401f004a2fc548e3491664736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220a39024e32ba40ca0fcedea15170e8d4bc08539520305401f004a2fc548e3491664736f6c634300080d0033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

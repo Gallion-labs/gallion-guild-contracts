@@ -19,6 +19,10 @@ contract TokensFacet is Modifiers, Context {
         return s.uri;
     }
 
+    function setUri(string memory _uri) public onlyGallion {
+        s.uri = _uri;
+    }
+
     function balanceOfBatch(address[] memory accounts, uint256[] memory ids)
     public
     view
