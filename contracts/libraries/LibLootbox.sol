@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import {AppStorage, Player, Rarity} from "./LibAppStorage.sol";
+import {AppStorage, Player, Rarity, LootboxContent} from "./LibAppStorage.sol";
 import {LibDiamond} from "./LibDiamond.sol";
 import {LibTokens} from "./LibTokens.sol";
 import {LibUtils} from "./Utils.sol";
@@ -54,7 +54,7 @@ library LibLootbox {
     /// @dev This function throws for queries about the zero address and non-existing players.
     /// @param playerAddress The player to query
     /// @param lootboxTokenId The lootbox to open
-    function open(address playerAddress, uint256 lootboxTokenId) internal {
+    function open(address playerAddress, uint256 lootboxTokenId) internal returns (LootboxContent memory) {
         AppStorage storage s = LibDiamond.appStorage();
         uint rewardFactor = s.rewardFactorByLootboxRarity[s.lootboxRarity[lootboxTokenId]];
         // calc the Matic reward according to the guild balance
@@ -81,6 +81,7 @@ library LibLootbox {
         s.totalOpenedLoootboxes++;
         s.players[playerAddress].totalOpenedLoootboxes++;
         emit OpenLootboxEvent(playerAddress, lootboxTokenId);
+        return LootboxContent(playerReward, s.guildTokensByLootbox[Rarity.level1]);
     }
 
     /// @notice Mint a lootbox for a player

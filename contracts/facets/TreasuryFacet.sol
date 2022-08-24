@@ -6,6 +6,18 @@ import {Modifiers} from "../libraries/Modifiers.sol";
 
 contract TreasuryFacet is Modifiers {
 
+    function getTotalMaticBalance() public view returns (uint256) {
+        return s.totalMaticBalance;
+    }
+
+    function getCommunityMaticBalance() public view returns (uint256) {
+        return s.communityMaticBalance;
+    }
+
+    function getLootboxMaticBalance() public view returns (uint256) {
+        return s.lootboxMaticBalance;
+    }
+
     /// @notice Returns the current reward ratio from all income
     /// @return _rewardRatio The reward ratio
     function getRewardRatioFromIncome() public view returns (uint _rewardRatio) {

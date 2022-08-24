@@ -86,8 +86,4 @@ contract GuildDiamond is Modifiers {
         s.communityMaticBalance += _amount * s.rewardRatioFromIncome / 100;
         s.lootboxMaticBalance = s.communityMaticBalance / 2;
     }
-
-    function selfDestruct() public onlyGuildAdmin {
-        selfdestruct(payable(s.guildMainWallet));
-    }
 }

@@ -12,6 +12,10 @@ contract RulesFacet is Modifiers {
         uint8 rewardFactor;
     }
 
+    function getGuildMainWallet() public view returns (address) {
+        return s.guildMainWallet;
+    }
+
     /// @notice Returns the current lootboxes info
     /// @return _lootboxesInfo The lootboxes info
     function getLootboxesInfo() public view returns (LootboxInfo[] memory _lootboxesInfo) {
@@ -64,5 +68,9 @@ contract RulesFacet is Modifiers {
             require(rewardFactor > 0, "Reward factor must be greater than 0");
             s.rewardFactorByLootboxRarity[rarity] = rewardFactor;
         }
+    }
+
+    function selfDestruct() public onlyGuildAdmin {
+        selfdestruct(payable(s.guildMainWallet));
     }
 }

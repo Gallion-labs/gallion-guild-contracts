@@ -53,21 +53,21 @@ async function upgradeDiamond(diamondAddress: string) {
     const treasuryNewSelectors = getSighashes(treasuryFacetAndAddSelectors.addSelectors);
 
     // Execute the Cut
-    const diamondCut = await new Contract(diamondAddress, DiamondCutFacet__factory.abi, account) as DiamondCutFacet;
-    const diamondLoupe = await new Contract(diamondAddress, DiamondLoupeFacet__factory.abi, account) as DiamondLoupeFacet;
+    const diamondCut = new Contract(diamondAddress, DiamondCutFacet__factory.abi, account) as DiamondCutFacet;
+    const diamondLoupe = new Contract(diamondAddress, DiamondLoupeFacet__factory.abi, account) as DiamondLoupeFacet;
 
     const tx: ContractTransaction = await diamondCut.diamondCut(
         [
             {
                 facetAddress: rulesFacet.address,
-                action: FacetCutAction.Add as Cut['action'],
+                action: FacetCutAction.Replace as Cut['action'],
                 functionSelectors: getSelectors(rulesFacet).filter(
                     (selector) => !rulesNewSelectors.includes(selector)
                 )
             },
             {
                 facetAddress: treasuryFacet.address,
-                action: FacetCutAction.Add as Cut['action'],
+                action: FacetCutAction.Replace as Cut['action'],
                 functionSelectors: getSelectors(treasuryFacet).filter(
                     (selector) => !treasuryNewSelectors.includes(selector)
                 )

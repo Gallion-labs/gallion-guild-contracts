@@ -28,7 +28,7 @@ struct AppStorage {
     uint32 transferGasLimit;
     uint256 nPlayers;
     bool locked;
-    string uri;
+    string baseUri;
 }
 
 struct Admin {
@@ -47,4 +47,9 @@ enum Rarity {
     level3,
     level4,
     level5
+}
+
+struct LootboxContent {
+    uint256 guildTokens;
+    uint256 maticTokens;
 }

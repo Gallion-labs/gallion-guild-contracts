@@ -24,6 +24,7 @@ contract DiamondInit {
         s.gallionLabs = _args.gallionLabs;
         require(_args.rewardRatioFromIncome >= 0 && _args.rewardRatioFromIncome <= 100, "Invalid reward ratio, must be between 0 and 100");
         s.rewardRatioFromIncome = _args.rewardRatioFromIncome;
+        s.guildMainWallet = _args.guildMainWallet;
 
         s.guildTokenId = 0;
         s.lootboxIds[Rarity.level1] = 1;

@@ -4,6 +4,7 @@ pragma solidity 0.8.13;
 import {Context} from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import {AppStorage} from "../libraries/LibAppStorage.sol";
 import {Modifiers} from "../libraries/Modifiers.sol";
+import {LibUtils} from "../libraries/Utils.sol";
 import "../libraries/LibTokens.sol";
 
 // Contains ERC1155 specific functions
@@ -15,12 +16,13 @@ contract TokensFacet is Modifiers, Context {
         return LibTokens.balanceOf(account, id);
     }
 
-    function uri() public view virtual returns (string memory) {
-        return s.uri;
+    function uri(uint256 _id) external view returns (string memory) {
+        require(_id < 5, "TokensFacet: Token id not found");
+        return LibUtils.strWithUint(s.baseUri, _id);
     }
 
-    function setUri(string memory _uri) public onlyGallion {
-        s.uri = _uri;
+    function setBaseUri(string memory baseUri) public onlyGallion {
+        s.baseUri = baseUri;
     }
 
     function balanceOfBatch(address[] memory accounts, uint256[] memory ids)
