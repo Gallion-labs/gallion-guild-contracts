@@ -8,12 +8,15 @@ import "../libraries/LibTokens.sol";
 
 // Contains ERC1155 specific functions
 contract TokensFacet is Modifiers, Context {
-    string public uri = "";
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
     function balanceOf(address account, uint256 id) public view virtual returns (uint256) {
         require(account != address(0), "ERC1155: address zero is not a valid owner");
         return LibTokens.balanceOf(account, id);
+    }
+
+    function uri() public view virtual returns (string memory) {
+        return s.uri;
     }
 
     function balanceOfBatch(address[] memory accounts, uint256[] memory ids)

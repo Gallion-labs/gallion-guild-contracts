@@ -28,6 +28,7 @@ struct AppStorage {
     uint32 transferGasLimit;
     uint256 nPlayers;
     bool locked;
+    string uri;
 }
 
 struct Admin {
