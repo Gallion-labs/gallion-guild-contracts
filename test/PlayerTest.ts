@@ -3,7 +3,7 @@ import { Address } from '../types';
 import { PlayerFacet } from '../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { logTokensWon } from './utils';
+import { logTokensWon } from '../scripts/utils';
 
 const { deployDiamond } = require('../scripts/deployForTests.ts');
 const { assert } = require('chai');

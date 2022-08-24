@@ -7,7 +7,7 @@ import TokensFacetArtifact from '../artifacts/contracts/facets/TokensFacet.sol/T
 import { DiamondCutFacet, DiamondCutFacet__factory, DiamondLoupeFacet, DiamondLoupeFacet__factory } from '../typechain-types';
 import { GasStation, GasStationData } from './gasStation';
 import { Network } from '@ethersproject/networks';
-import { getSighashes } from '../test/utils';
+import { FacetAndAddSelectors, getSighashes } from './utils';
 
 const debug = Debug('gallion:contracts:upgrade');
 
@@ -25,6 +25,14 @@ async function upgradeDiamond(diamondAddress: string): Promise<Address> {
         provider
     );
 
+    const facetAndAddSelectors: FacetAndAddSelectors = {
+        facetName: 'TokensFacet',
+        addSelectors: [
+            'function setUri(string uri) public'
+        ],
+        removeSelectors: [],
+    };
+
     //Create the cut
     const cut: Cut[] = [];
 
@@ -33,7 +41,7 @@ async function upgradeDiamond(diamondAddress: string): Promise<Address> {
     const tokensFacet = await TokensFacet.deploy(gasStationData);
     await tokensFacet.deployed();
     debug(chalk.grey(`TokensFacet deployed: ${ chalk.greenBright(tokensFacet.address) }`));
-    const newSelectors = getSighashes(tokensFacet.addSelectors);
+    const newSelectors = getSighashes(facetAndAddSelectors.addSelectors);
 
     let existingFuncs = getSelectors(tokensFacet);
     for (const selector of newSelectors) {
@@ -41,7 +49,7 @@ async function upgradeDiamond(diamondAddress: string): Promise<Address> {
             const index = newSelectors.findIndex((val) => val == selector);
 
             throw Error(
-                `Selector ${ selector } (${ tokensFacet.addSelectors[index] }) not found`
+                `Selector ${ selector } (${ facetAndAddSelectors.addSelectors[index] }) not found`
             );
         }
     }

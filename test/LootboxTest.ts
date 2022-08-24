@@ -4,7 +4,7 @@ import { LootboxFacet, PlayerFacet, TokensFacet } from '../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { BigNumber } from 'ethers';
-import { logTokensWon } from './utils';
+import { logTokensWon } from '../scripts/utils';
 
 const { deployDiamond } = require('../scripts/deployForTests.ts');
 
