@@ -60,14 +60,14 @@ async function upgradeDiamond(diamondAddress: string) {
         [
             {
                 facetAddress: rulesFacet.address,
-                action: FacetCutAction.Replace as Cut['action'],
+                action: FacetCutAction.Add as Cut['action'],
                 functionSelectors: getSelectors(rulesFacet).filter(
                     (selector) => !rulesNewSelectors.includes(selector)
                 )
             },
             {
                 facetAddress: treasuryFacet.address,
-                action: FacetCutAction.Replace as Cut['action'],
+                action: FacetCutAction.Add as Cut['action'],
                 functionSelectors: getSelectors(treasuryFacet).filter(
                     (selector) => !treasuryNewSelectors.includes(selector)
                 )
