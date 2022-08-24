@@ -1,6 +1,5 @@
 import { FacetCutAction, getSelectors } from './libraries/diamond';
 import { Contract, ContractReceipt, ContractTransaction, ethers } from 'ethers';
-import { Address } from '../types';
 import Debug from 'debug';
 import chalk from 'chalk';
 import RulesFacetArtifact from '../artifacts/contracts/facets/RulesFacet.sol/RulesFacet.json';
