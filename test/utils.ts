@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import { Signer } from "@ethersproject/abstract-signer";
 import { Contract } from "@ethersproject/contracts";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DiamondLoupeFacet, OwnershipFacet } from "../typechain-types";
 import { ethers } from 'ethers';
 
@@ -54,30 +53,6 @@ export function getSelector(func: string) {
 
 export async function diamondOwner(address: string, ethers: any) {
     return await (await ethers.getContractAt("OwnershipFacet", address)).owner();
-}
-
-export async function getDiamondSigner(hre: HardhatRuntimeEnvironment, diamondAddress: string, override?: string) {
-    //Instantiate the Signer
-    let signer: Signer;
-    const owner = await (
-        (await hre.ethers.getContractAt(
-            "OwnershipFacet",
-            diamondAddress
-        )) as OwnershipFacet
-    ).owner();
-    const testing = ["hardhat", "localhost"].includes(hre.network.name);
-
-    if (testing) {
-        await hre.network.provider.request({
-            method: "hardhat_impersonateAccount",
-            params: [override ? override : owner],
-        });
-        return await hre.ethers.getSigner(override ? override : owner);
-    } else if (hre.network.name === "matic") {
-        return (await hre.ethers.getSigners())[0];
-    } else {
-        throw Error("Incorrect network selected");
-    }
 }
 
 export interface FacetsAndAddSelectors {
