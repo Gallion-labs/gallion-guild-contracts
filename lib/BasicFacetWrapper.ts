@@ -1,7 +1,5 @@
 import { Network } from "@ethersproject/networks";
 import { Contract, ContractInterface, ethers } from "ethers";
-import { LootboxFacet, LootboxFacet__factory, PlayerFacet, PlayerFacet__factory } from "../typechain-types";
-import { typeOf } from "uri-js/dist/esnext/util";
 
 export default abstract class BasicFacetWrapper {
     private static readonly matic: Network = {
