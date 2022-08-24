@@ -13,6 +13,7 @@ struct AppStorage {
     mapping(Rarity => uint256) lootboxIds; // Lootbox id by rarity (ERC1155)
     mapping(uint256 => Rarity) lootboxRarity; // Lootbox rarity by id (ERC1155)
     mapping(uint256 => mapping(address => uint256)) _balances; // Tokens balances (ERC1155)
+    mapping(address => uint256) investments;
     mapping(Rarity => uint256) guildTokensByLootbox; // Guild tokens by lootbox rarity (ERC1155)
     uint256 totalMintedLoootboxes;
     uint256 totalOpenedLoootboxes;

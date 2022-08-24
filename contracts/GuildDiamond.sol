@@ -42,13 +42,21 @@ contract GuildDiamond is Modifiers {
     fallback() external payable {
         LibDiamond.DiamondStorage storage ds;
         bytes32 position = LibDiamond.DIAMOND_STORAGE_POSITION;
+
         // get diamond storage
         assembly {
             ds.slot := position
         }
+
         // get facet from function selector
         address facet = ds.facetAddressAndSelectorPosition[msg.sig].facetAddress;
         require(facet != address(0), "Diamond: Function does not exist");
+
+        // Adjust Matic balances
+        if (msg.value > 0) {
+            adjustBalances(msg.sender, msg.value);
+        }
+
         // Execute external function from facet using delegatecall and return any value.
         assembly {
             // copy function selector and any arguments
@@ -66,17 +74,14 @@ contract GuildDiamond is Modifiers {
                 return (0, returndatasize())
             }
         }
-        // Adjust Matic balances
-        if (msg.value > 0) {
-            adjustBalances(msg.value);
-        }
     }
 
     receive() external payable {
-        adjustBalances(msg.value);
+        adjustBalances(msg.sender, msg.value);
     }
 
-    function adjustBalances(uint256 _amount) internal {
+    function adjustBalances(address sender, uint256 _amount) internal {
+        s.investments[sender] += _amount;
         s.totalMaticBalance += _amount;
         s.communityMaticBalance += _amount * s.rewardRatioFromIncome / 100;
         s.lootboxMaticBalance = s.communityMaticBalance / 2;
