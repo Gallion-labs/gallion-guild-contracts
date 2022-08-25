@@ -16,7 +16,7 @@ contract LootboxFacet is Modifiers {
         _lootboxBalances = LibLootbox.list(playerAddress);
     }
 
-    function getLastLootboxContents(address playerAddress) public view returns (LootboxContent memory) {
+    function getLastLootboxContent(address playerAddress) public view returns (LootboxContent memory) {
         return s.lastLootboxContents[playerAddress];
     }
 
