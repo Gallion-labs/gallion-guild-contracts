@@ -14,13 +14,22 @@ import TreasuryFacetArtifact from '../artifacts/contracts/facets/TreasuryFacet.s
 import PlayerFacetArtifact from '../artifacts/contracts/facets/PlayerFacet.sol/PlayerFacet.json';
 import LootboxFacetArtifact from '../artifacts/contracts/facets/LootboxFacet.sol/LootboxFacet.json';
 import IDiamondCutArtifact from '../artifacts/contracts/interfaces/IDiamondCut.sol/IDiamondCut.json';
-import { DiamondCutFacet } from '../typechain-types';
+import { DiamondCutFacet, DiamondInit } from '../typechain-types';
 import { GasStation, GasStationData } from './gasStation';
 import { Network } from '@ethersproject/networks';
+import ArgsStruct = DiamondInit.ArgsStruct;
 
 const debug = Debug('gallion:contracts:deploy');
 
-async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rewardRatioFromIncome: number): Promise<Address> {
+export interface DeployOptions {
+    guildAdmins: string[];
+    guildMainWallet: string;
+    rewardRatioFromIncome: number;
+    guildTokenName: string;
+    guildTokenSymbol: string;
+    tokenBaseUri: string;
+}
+async function deployDiamond(options: DeployOptions): Promise<Address> {
     const gasStationData: GasStationData = await GasStation.getGasData();
     const matic: Network = {
         name: 'matic',
@@ -106,14 +115,16 @@ async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rew
     let tx;
     let receipt;
     // call to init function
-    let functionCall = diamondInit.interface.encodeFunctionData('init', [
-        {
-            gallionLabs: account.address,
-            guildAdmins,
-            rewardRatioFromIncome,
-            guildMainWallet
-        }
-    ]);
+    const initArgs: ArgsStruct = {
+        gallionLabs: account.address,
+        guildAdmins: options.guildAdmins,
+        rewardRatioFromIncome: options.rewardRatioFromIncome,
+        guildMainWallet: options.guildMainWallet,
+        guildTokenName: options.guildTokenName,
+        guildTokenSymbol: options.guildTokenSymbol,
+        tokenBaseUri: options.tokenBaseUri
+    }
+    let functionCall = diamondInit.interface.encodeFunctionData('init', [initArgs]);
     tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall, gasStationData);
     // debug('Diamond cut tx: ', tx.hash);
     receipt = await tx.wait();

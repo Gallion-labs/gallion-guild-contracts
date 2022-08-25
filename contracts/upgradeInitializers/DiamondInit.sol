@@ -18,6 +18,9 @@ contract DiamondInit {
         address[] guildAdmins;
         uint8 rewardRatioFromIncome;
         address guildMainWallet;
+        string guildTokenName;
+        string guildTokenSymbol;
+        string tokenBaseUri;
     }
 
     function init(Args memory _args) external {
@@ -25,6 +28,9 @@ contract DiamondInit {
         require(_args.rewardRatioFromIncome >= 0 && _args.rewardRatioFromIncome <= 100, "Invalid reward ratio, must be between 0 and 100");
         s.rewardRatioFromIncome = _args.rewardRatioFromIncome;
         s.guildMainWallet = _args.guildMainWallet;
+        s.name = _args.guildTokenName;
+        s.symbol = _args.guildTokenSymbol;
+        s.baseUri = _args.tokenBaseUri;
 
         s.guildTokenId = 0;
         s.lootboxIds[Rarity.level1] = 1;
