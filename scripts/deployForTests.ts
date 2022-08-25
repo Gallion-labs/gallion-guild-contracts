@@ -65,7 +65,10 @@ async function deployDiamond(guildAdmins: string[], guildMainWallet: string, rew
             gallionLabs: account,
             guildAdmins,
             rewardRatioFromIncome,
-            guildMainWallet
+            guildMainWallet,
+            tokenBaseUri: '',
+            guildTokenName: 'Gallion',
+            guildTokenSymbol: 'GAL',
         }
     ]);
     tx = await diamondCut.diamondCut(cut, diamondInit.address, functionCall);

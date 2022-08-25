@@ -17,7 +17,6 @@ import IDiamondCutArtifact from '../artifacts/contracts/interfaces/IDiamondCut.s
 import { DiamondCutFacet, DiamondInit } from '../typechain-types';
 import { GasStation, GasStationData } from './gasStation';
 import { Network } from '@ethersproject/networks';
-import ArgsStruct = DiamondInit.ArgsStruct;
 
 const debug = Debug('gallion:contracts:deploy');
 
@@ -115,7 +114,7 @@ async function deployDiamond(options: DeployOptions): Promise<Address> {
     let tx;
     let receipt;
     // call to init function
-    const initArgs: ArgsStruct = {
+    const initArgs: DiamondInit.ArgsStruct = {
         gallionLabs: account.address,
         guildAdmins: options.guildAdmins,
         rewardRatioFromIncome: options.rewardRatioFromIncome,
