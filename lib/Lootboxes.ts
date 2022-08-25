@@ -14,8 +14,7 @@ export default abstract class Lootboxes extends BasicFacetWrapper {
 
     public static async list(contractAddress: string, playerAddress: string): Promise<LootboxesCount> {
         const contract = super.getContractFacet(contractAddress, this.ABI) as LootboxFacet;
-        const gasStationData: GasStationData = await GasStation.getGasData();
-        const lootboxes = await contract.list(playerAddress, gasStationData);
+        const lootboxes = await contract.list(playerAddress);
         if (lootboxes.length === 5) {
             return {
                 Common: lootboxes[0].toNumber(),
