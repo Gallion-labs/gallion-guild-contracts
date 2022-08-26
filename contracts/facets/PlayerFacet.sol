@@ -49,8 +49,8 @@ contract PlayerFacet is Modifiers {
     /// @param playerAddress Address of the player to add
     function addPlayer(address playerAddress) external onlyGuildAdminOrGallion playerNotExists(playerAddress) {
         s.players[playerAddress] = Player(block.timestamp, 0, 0);
-        s.totalMintedLoootboxesByPlayer[playerAddress] = new uint256[](5);
-        s.totalOpenedLoootboxesByPlayer[playerAddress] = new uint256[](5);
+        s.totalMintedLoootboxesByPlayer[playerAddress] = new uint256[](s.rarities.length + 1);
+        s.totalOpenedLoootboxesByPlayer[playerAddress] = new uint256[](s.rarities.length + 1);
         s.nPlayers++;
     }
 
