@@ -1,6 +1,8 @@
-import BasicFacetWrapper from "./BasicFacetWrapper";
-import { LootboxFacet, LootboxFacet__factory } from "../typechain-types";
-import { GasStation, GasStationData } from "../scripts/gasStation";
+import BasicFacetWrapper from './BasicFacetWrapper';
+import { LootboxFacet, LootboxFacet__factory } from '../typechain-types';
+import { GasStation, GasStationData } from '../scripts/gasStation';
+import { LootboxContentStruct } from '../typechain-types/contracts/facets/LootboxFacet';
+import { ethers } from 'ethers';
 
 export default abstract class Lootboxes extends BasicFacetWrapper {
     private static readonly ABI = LootboxFacet__factory.abi;
@@ -32,6 +34,16 @@ export default abstract class Lootboxes extends BasicFacetWrapper {
             Ethereal: 0,
         };
     }
+
+    public static async getLastLootboxContent(contractAddress: string, playerAddress: string): Promise<LootboxContent> {
+        const contract = super.getContractFacet(contractAddress, this.ABI) as LootboxFacet;
+        const lootboxes = await contract.getLastLootboxContent(playerAddress);
+        return {
+            maticTokens: +ethers.utils.formatEther(lootboxes.maticTokens),
+            guildTokens: lootboxes.guildTokens.toNumber()
+        };
+    }
+
 }
 
 export interface LootboxesCount {
@@ -40,4 +52,9 @@ export interface LootboxesCount {
     Epic: number;
     Legendary: number;
     Ethereal: number;
+}
+
+export interface LootboxContent {
+    maticTokens: number;
+    guildTokens: number;
 }
