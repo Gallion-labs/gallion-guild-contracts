@@ -1,6 +1,6 @@
 # Welcome to the Gallion Contracts!
 
-**This project is currently in stand-by.**
+**⚠️ This project is currently in stand-by. ⚠️**
 
 Gallion brings together a set of tools for the management and animation of Discord guilds in the world of web3 games.
 
